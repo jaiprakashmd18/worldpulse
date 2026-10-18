@@ -14,7 +14,7 @@ export function webglAvailable() {
   } catch { return false; }
 }
 
-const DEFAULT_VIEW = { lat: 18, lon: 10, distance: 3.1 };
+const DEFAULT_VIEW = { lat: 18, lon: 10, distance: 3.45 };
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 export class Globe {
@@ -394,7 +394,7 @@ export class Globe {
 
   defaultDistance() {
     const { clientWidth: w, clientHeight: h } = this.container;
-    return w < 640 || w < h ? DEFAULT_VIEW.distance + 0.55 : DEFAULT_VIEW.distance;
+    return w < 640 || w < h ? DEFAULT_VIEW.distance + 0.35 : DEFAULT_VIEW.distance;
   }
 
   resize() {

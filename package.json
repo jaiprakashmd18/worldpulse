@@ -1,0 +1,21 @@
+{
+  "name": "worldpulse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WorldPulse — a global, anonymous mood map. One planet. Billions of feelings.",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "build": "node scripts/build.mjs",
+    "countries:sql": "node scripts/generate-country-sql.mjs",
+    "test:db": "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f supabase/tests.sql",
+    "test:e2e": "node tests/e2e.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

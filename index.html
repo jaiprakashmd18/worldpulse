@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>WorldPulse — One planet. Billions of feelings.</title>
+  <meta name="description" content="WorldPulse is a global, anonymous mood map. Share how you feel and explore the emotional pulse of the world on an interactive 3D globe.">
+  <meta name="theme-color" content="#050711">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:title" content="WorldPulse — A Global Mood Map">
+  <meta property="og:description" content="One planet. Billions of feelings. Add your feeling to the global pulse.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/config.js"></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="starfield" aria-hidden="true"></div>
+
+  <div id="demo-banner" class="demo-banner" role="status" hidden>
+    <span class="demo-pill">Demo mode</span>
+    <span>You're viewing <strong>sample data</strong>, not real people. Submissions stay in this browser only.</span>
+    <a href="https://github.com/your-org/worldpulse#connect-supabase" class="demo-link" data-config-link>Set up live mode</a>
+  </div>
+
+  <header class="nav" id="top">
+    <a class="brand" href="#explore" aria-label="WorldPulse home">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#45E6FF"/><stop offset="1" stop-color="#9B7CFF"/></linearGradient></defs>
+        <circle cx="20" cy="20" r="17" fill="none" stroke="url(#bm)" stroke-width="2"/>
+        <ellipse cx="20" cy="20" rx="7.5" ry="17" fill="none" stroke="url(#bm)" stroke-width="1.2" opacity=".55"/>
+        <path d="M4 21h8l3-7 5 14 4-10 2 3h10" fill="none" stroke="#E9FBFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>World<b>Pulse</b></span>
+    </a>
+    <nav aria-label="Primary">
+      <button class="menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul id="nav-links" class="nav-links">
+        <li><a href="#explore">Explore</a></li>
+        <li><a href="#pulse">Live Pulse</a></li>
+        <li><a href="#insights">Country Insights</a></li>
+        <li><a href="#about">About</a></li>
+        <li class="nav-cta-mobile"><button class="btn btn-primary" data-share>Share Your Mood</button></li>
+      </ul>
+    </nav>
+    <button class="btn btn-primary nav-cta" data-share>
+      <span aria-hidden="true">✦</span> Share Your Mood
+    </button>
+  </header>
+
+  <main id="main">
+    <!-- HERO + GLOBE -------------------------------------------------- -->
+    <section id="explore" class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot" data-status-dot></span><span data-status-text>Connecting…</span></p>
+        <h1 id="hero-title">How is the world <span class="gradient-text">feeling</span> today?</h1>
+        <p class="lede">Millions of lives. Different stories. One shared planet. Add your feeling to the global pulse.</p>
+        <div class="hero-actions">
+          <a class="btn btn-ghost btn-lg" href="#globe-stage" data-explore>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+            Explore the Globe
+          </a>
+          <button class="btn btn-primary btn-lg" data-share>Share Your Mood</button>
+        </div>
+        <dl class="hero-stats" aria-live="polite">
+          <div><dt>Moods <span data-window-label>· last 24 hours</span></dt><dd data-stat="total"><span class="skeleton">—</span></dd></div>
+          <div><dt>Countries represented</dt><dd data-stat="countries"><span class="skeleton">—</span></dd></div>
+          <div><dt>Most shared</dt><dd data-stat="top"><span class="skeleton">—</span></dd></div>
+        </dl>
+      </div>
+
+      <div class="globe-stage" id="globe-stage">
+        <div class="globe-toolbar">
+          <div class="search" role="search">
+            <label for="globe-search" class="sr-only">Find a country</label>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="globe-search" type="search" placeholder="Find a country…" autocomplete="off"
+                   role="combobox" aria-expanded="false" aria-controls="globe-search-list" aria-autocomplete="list">
+            <ul id="globe-search-list" class="combo-list" role="listbox" hidden></ul>
+          </div>
+        </div>
+
+        <div id="globe" class="globe" aria-label="Interactive 3D globe. Use the country search or the country list to select a country with the keyboard.">
+          <div class="globe-loading" data-globe-loading>
+            <div class="loader-orb" aria-hidden="true"></div>
+            <p>Waking up the planet…</p>
+          </div>
+        </div>
+        <div id="map-fallback" class="map-fallback" hidden></div>
+
+        <div class="globe-controls">
+          <button class="icon-btn" data-globe="rotate" aria-pressed="true" aria-label="Pause rotation" title="Pause / resume rotation">
+            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg>
+          </button>
+          <button class="icon-btn" data-globe="reset" aria-label="Reset view" title="Reset view">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg>
+          </button>
+        </div>
+
+        <div id="globe-tooltip" class="globe-tooltip" role="tooltip" hidden></div>
+
+        <article id="country-card" class="country-card glass" hidden aria-live="polite" aria-labelledby="cc-name">
+          <button class="icon-btn close" data-close-card aria-label="Close country card">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+          <div class="cc-head">
+            <span class="cc-flag" data-cc="flag" aria-hidden="true"></span>
+            <div>
+              <h3 id="cc-name" data-cc="name"></h3>
+              <p class="muted" data-cc="meta"></p>
+            </div>
+          </div>
+          <div class="cc-body" data-cc="body"></div>
+          <div class="cc-actions">
+            <a class="btn btn-ghost btn-sm" href="#insights" data-cc="insights">Country insights →</a>
+            <button class="btn btn-primary btn-sm" data-cc="share">Share from here</button>
+          </div>
+        </article>
+
+        <p class="globe-hint" aria-hidden="true">Drag to rotate · Scroll or pinch to zoom · Click a country</p>
+      </div>
+
+      <div class="legend glass" id="legend">
+        <div class="legend-head">
+          <h2 class="legend-title">Mood filter</h2>
+          <p class="muted small" data-legend-note>Markers show each country's most shared mood. Countries with fewer than 10 moods appear as faint dots.</p>
+        </div>
+        <div class="chips" role="radiogroup" aria-label="Filter the globe by mood" data-mood-filter></div>
+      </div>
+    </section>
+
+    <!-- LIVE PULSE ---------------------------------------------------- -->
+    <section id="pulse" class="section" aria-labelledby="pulse-title">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Live Global Pulse</p>
+          <h2 id="pulse-title">The world, right now</h2>
+          <p class="muted" data-updated>—</p>
+        </div>
+        <div class="segmented" role="radiogroup" aria-label="Time window" data-window-tabs>
+          <button role="radio" data-window="1h" aria-checked="false">Last hour</button>
+          <button role="radio" data-window="24h" aria-checked="true">24 hours</button>
+          <button role="radio" data-window="7d" aria-checked="false">7 days</button>
+          <button role="radio" data-window="30d" aria-checked="false">30 days</button>
+        </div>
+      </div>
+
+      <div class="pulse-empty glass" data-pulse-empty hidden>
+        <div class="empty-orb" aria-hidden="true">🌍</div>
+        <h3>The pulse is quiet in this window</h3>
+        <p class="muted">No moods have been shared yet for this period. Be the first to add yours.</p>
+        <button class="btn btn-primary" data-share>Share the first mood</button>
+      </div>
+      <div class="pulse-error glass" data-pulse-error hidden role="alert">
+        <h3>We couldn't reach the pulse</h3>
+        <p class="muted">The statistics service isn't responding. We'll keep trying in the background.</p>
+        <button class="btn btn-ghost" data-retry>Try again</button>
+      </div>
+
+      <div class="pulse-grid" data-pulse-content>
+        <div class="stat-card glass">
+          <p class="stat-label">Most reported mood</p>
+          <p class="stat-value" data-pulse="top">—</p>
+          <p class="stat-sub" data-pulse="top-sub"></p>
+        </div>
+        <div class="stat-card glass">
+          <p class="stat-label">Moods shared</p>
+          <p class="stat-value" data-pulse="total">—</p>
+          <p class="stat-sub" data-pulse="total-sub"></p>
+        </div>
+        <div class="stat-card glass">
+          <p class="stat-label">Countries with moods</p>
+          <p class="stat-value" data-pulse="countries">—</p>
+          <p class="stat-sub">of 250 countries &amp; territories</p>
+        </div>
+        <div class="stat-card glass">
+          <p class="stat-label">Positive share vs previous period</p>
+          <p class="stat-value" data-pulse="trend">—</p>
+          <p class="stat-sub" data-pulse="trend-sub"></p>
+        </div>
+
+        <div class="chart-card glass span-2">
+          <div class="card-head">
+            <h3>Mood distribution</h3>
+            <p class="muted small" data-pulse="filter-note"></p>
+          </div>
+          <div class="chart-box tall"><canvas id="chart-global" role="img" aria-label="Global mood distribution"></canvas></div>
+          <details class="data-table"><summary>View as table</summary><table data-table="global"></table></details>
+        </div>
+        <div class="chart-card glass span-2">
+          <div class="card-head">
+            <h3>Pulse over time</h3>
+            <p class="muted small">Moods shared per period, with the share that were positive.</p>
+          </div>
+          <div class="chart-box"><canvas id="chart-timeline" role="img" aria-label="Moods over time"></canvas></div>
+          <div class="trend-list" data-trend-list aria-label="Change in each mood's share compared with the previous period"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COUNTRY INSIGHTS ---------------------------------------------- -->
+    <section id="insights" class="section" aria-labelledby="insights-title">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Country Insights</p>
+          <h2 id="insights-title">Zoom into a country</h2>
+          <p class="muted">Aggregated, anonymous self-reports. Breakdowns appear once a country has at least <span data-threshold>10</span> moods in the selected window.</p>
+        </div>
+        <div class="search insights-search">
+          <label for="insights-search" class="sr-only">Choose a country for insights</label>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="insights-search" type="search" placeholder="Search countries…" autocomplete="off"
+                 role="combobox" aria-expanded="false" aria-controls="insights-search-list" aria-autocomplete="list">
+          <ul id="insights-search-list" class="combo-list" role="listbox" hidden></ul>
+        </div>
+      </div>
+
+      <div class="insights glass" data-insights aria-live="polite">
+        <div class="insights-empty">
+          <div class="empty-orb" aria-hidden="true">🧭</div>
+          <h3>Pick a country to see its pulse</h3>
+          <p class="muted">Click a country on the globe or search above.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECENT ACTIVITY ----------------------------------------------- -->
+    <section id="activity" class="section" aria-labelledby="activity-title">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Recent Activity</p>
+          <h2 id="activity-title">Moments from around the world</h2>
+          <p class="muted">Anonymous moods as they arrive. Notes appear only after moderation.</p>
+        </div>
+      </div>
+      <ol class="feed" data-feed aria-live="polite" aria-relevant="additions"></ol>
+    </section>
+
+    <!-- ABOUT --------------------------------------------------------- -->
+    <section id="about" class="section about" aria-labelledby="about-title">
+      <div class="section-head">
+        <div>
+          <p class="kicker">About WorldPulse</p>
+          <h2 id="about-title">A shared observatory for how we feel</h2>
+          <p class="muted lede-sm">WorldPulse turns voluntary, anonymous check-ins into a living picture of our planet. No accounts, no names, no tracking of where you are — just one feeling and the country you choose.</p>
+        </div>
+      </div>
+      <div class="about-grid">
+        <article class="glass feature">
+          <span class="feature-icon" aria-hidden="true">🫧</span>
+          <h3>Anonymous by design</h3>
+          <p class="muted">We store a mood, the country you pick, an optional moderated note and a server timestamp. Never your name, email, IP address or GPS location.</p>
+        </article>
+        <article class="glass feature">
+          <span class="feature-icon" aria-hidden="true">🛡️</span>
+          <h3>Protected small groups</h3>
+          <p class="muted">Country breakdowns stay hidden until at least 10 people have shared in a window, so no one can be singled out.</p>
+        </article>
+        <article class="glass feature">
+          <span class="feature-icon" aria-hidden="true">📊</span>
+          <h3>Honest numbers</h3>
+          <p class="muted">Every figure comes from real submissions. When there's no data, we say so. Demo data is always clearly labelled.</p>
+        </article>
+      </div>
+      <p class="disclaimer">WorldPulse shows voluntary self-reports from people who chose to take part. It is not a scientific survey and does not measure any nation's mental health. A country's results never describe how any individual from that country feels.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="#explore"><span>World<b>Pulse</b></span></a>
+        <p class="muted small">One planet. Billions of feelings.</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul class="footer-links">
+          <li><a href="#about">About WorldPulse</a></li>
+          <li><button class="link-btn" data-info="privacy">Privacy</button></li>
+          <li><button class="link-btn" data-info="guidelines">Community Guidelines</button></li>
+          <li><button class="link-btn" data-info="contact">Contact</button></li>
+          <li><a href="#" data-github-link>GitHub <span class="tag">configure</span></a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-note small muted">Mood data represents voluntary self-reports, not a scientific measurement of national mental health. If you are struggling, please reach out to local emergency services or a crisis line in your country.</p>
+    <p class="footer-note small muted">© <span data-year></span> WorldPulse. Earth imagery: NASA Blue Marble via three-globe. Borders: Natural Earth via world-atlas.</p>
+  </footer>
+
+  <!-- SHARE MODAL ------------------------------------------------------ -->
+  <dialog id="share-modal" class="modal" aria-labelledby="share-title">
+    <form method="dialog" class="modal-inner" novalidate data-share-form>
+      <header class="modal-head">
+        <div>
+          <p class="kicker" data-step-label>Step 1 of 3</p>
+          <h2 id="share-title" data-step-title>How are you feeling?</h2>
+        </div>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+      <div class="progress" aria-hidden="true"><span data-progress></span></div>
+
+      <div class="demo-note" data-demo-note hidden>Demo mode — this submission stays in your browser and is not shared with anyone.</div>
+
+      <!-- Step 1 -->
+      <fieldset class="step" data-step="1">
+        <legend class="sr-only">Choose a mood</legend>
+        <div class="mood-grid" data-mood-options></div>
+      </fieldset>
+
+      <!-- Step 2 -->
+      <fieldset class="step" data-step="2" hidden>
+        <legend class="sr-only">Choose your country</legend>
+        <p class="muted small">Pick the country you want your mood counted in. We never detect or request your location.</p>
+        <div class="search modal-search">
+          <label for="share-country-search" class="sr-only">Search countries</label>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="share-country-search" type="search" placeholder="Search by country name…" autocomplete="off"
+                 role="combobox" aria-expanded="false" aria-controls="share-country-list" aria-autocomplete="list">
+          <ul id="share-country-list" class="combo-list inline" role="listbox" hidden></ul>
+        </div>
+        <div class="field-row">
+          <label for="share-country-select" class="small muted">Or choose from the list</label>
+          <select id="share-country-select" class="select">
+            <option value="">Select a country…</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" data-pick-on-globe>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+          Choose on the globe
+        </button>
+        <p class="selected-country" data-selected-country aria-live="polite"></p>
+      </fieldset>
+
+      <!-- Step 3 -->
+      <fieldset class="step" data-step="3" hidden>
+        <legend class="sr-only">Optional note and submit</legend>
+        <div class="summary" data-summary></div>
+        <div class="choice-row" role="radiogroup" aria-label="Share a note?">
+          <label class="choice">
+            <input type="radio" name="note-mode" value="none" checked>
+            <span><strong>Mood only</strong><small>Most private. Nothing but your mood and country.</small></span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="note-mode" value="note">
+            <span><strong>Add a short note</strong><small>Public after moderation.</small></span>
+          </label>
+        </div>
+        <div class="note-field" data-note-field hidden>
+          <label for="share-message">Your note <span class="muted small">(optional, public)</span></label>
+          <textarea id="share-message" maxlength="140" rows="3" placeholder="What's shaping your day?" aria-describedby="note-help note-count"></textarea>
+          <div class="note-meta">
+            <p id="note-help" class="small muted">Notes may be visible to other visitors after review. Don't include names, contact details, links or anything that identifies you or others.</p>
+            <span id="note-count" class="small muted" aria-live="polite">0 / 140</span>
+          </div>
+        </div>
+        <!-- Honeypot: hidden from people, tempting to bots. -->
+        <div class="hp" aria-hidden="true">
+          <label for="share-website">Website</label>
+          <input id="share-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <p class="form-error" data-form-error role="alert" hidden></p>
+      </fieldset>
+
+      <!-- Success -->
+      <div class="step success" data-step="done" hidden>
+        <div class="success-orb" aria-hidden="true"><span data-success-emoji>💙</span></div>
+        <h3 data-success-title>Your pulse has joined the world.</h3>
+        <p class="muted" data-success-text>Thanks for sharing how you feel. 💙</p>
+      </div>
+
+      <footer class="modal-foot">
+        <button type="button" class="btn btn-ghost" data-back hidden>Back</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-primary" data-next disabled>Continue</button>
+        <button type="button" class="btn btn-primary btn-submit" data-submit hidden>
+          <span class="btn-label">Add My Pulse to the World</span>
+        </button>
+        <button type="button" class="btn btn-primary" data-done hidden>Explore the globe</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- INFO DIALOG ------------------------------------------------------ -->
+  <dialog id="info-dialog" class="modal" aria-labelledby="info-title">
+    <div class="modal-inner prose">
+      <header class="modal-head">
+        <h2 id="info-title" data-info-title></h2>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+      <div data-info-body></div>
+    </div>
+  </dialog>
+
+  <template id="tpl-privacy">
+    <p><strong>Last updated:</strong> see the project repository.</p>
+    <h3>What we store</h3>
+    <ul>
+      <li>The mood you choose and the country you select.</li>
+      <li>An optional note of up to 140 characters, only if you choose to write one. Notes that fail automatic checks are discarded, not stored.</li>
+      <li>A timestamp generated by our server, in UTC.</li>
+    </ul>
+    <h3>What we never store with your mood</h3>
+    <ul>
+      <li>Your name, email address, account, IP address or precise location. We never ask for GPS access.</li>
+    </ul>
+    <h3>Abuse prevention</h3>
+    <p>To stop spam, your browser keeps a random identifier, and our database records salted, daily-rotating hashes of that identifier and of your network address in a separate rate-limit log. These hashes are not linked to your mood and are deleted after 48 hours.</p>
+    <h3>How long we keep data</h3>
+    <ul>
+      <li>Moods: <span data-retention>90</span> days, then deleted.</li>
+      <li>Notes and reports about notes: 30 days, then deleted.</li>
+    </ul>
+    <h3>What other people can see</h3>
+    <p>Aggregated statistics, and a feed of recent moods showing the mood, the chosen country, a minute-level time and any approved note. Country breakdowns are hidden until at least 10 moods exist for that country in the selected window.</p>
+    <h3>Infrastructure</h3>
+    <p>Like any website, our hosting provider (Vercel) and database provider (Supabase) may process technical request metadata such as IP addresses and user agents in their own logs for security and operations, under their own privacy policies. Fonts are served by Google Fonts and libraries by jsDelivr, which receive standard request information.</p>
+    <h3>Local storage</h3>
+    <p>Your browser stores the random identifier above, your last chosen country (to save you time) and, in demo mode, your demo submissions. You can clear these at any time from your browser settings.</p>
+  </template>
+
+  <template id="tpl-guidelines">
+    <p>WorldPulse is a gentle place. Notes are short, public, and reviewed before they appear.</p>
+    <ul>
+      <li><strong>Share feelings, not identities.</strong> No names, usernames, phone numbers, emails, addresses or links.</li>
+      <li><strong>Be kind.</strong> No harassment, hate, threats or sexual content.</li>
+      <li><strong>No promotion or spam.</strong></li>
+      <li><strong>Don't speak for a country.</strong> Your note is about you.</li>
+    </ul>
+    <p>Use the <em>Report</em> button on any note that breaks these rules. Notes with several reports are hidden automatically until reviewed.</p>
+    <p>If you are in crisis or thinking about harming yourself, please contact local emergency services or a crisis line in your country right away.</p>
+  </template>
+
+  <template id="tpl-contact">
+    <p>Questions, feedback or a privacy request? Reach the team at <a data-contact-email href="#">the address configured for this deployment</a>.</p>
+    <p>Because submissions are anonymous, we cannot look up or delete a specific mood you shared — there is nothing that links it back to you. Moods expire automatically after the retention period.</p>
+  </template>
+
+  <!-- REPORT DIALOG ---------------------------------------------------- -->
+  <dialog id="report-dialog" class="modal small-modal" aria-labelledby="report-title">
+    <form method="dialog" class="modal-inner" data-report-form>
+      <header class="modal-head">
+        <h2 id="report-title">Report this note</h2>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+      <p class="muted small">Reports are anonymous. Notes with several reports are hidden until reviewed.</p>
+      <label for="report-reason" class="small">Reason</label>
+      <select id="report-reason" class="select" required>
+        <option value="spam">Spam or promotion</option>
+        <option value="abusive">Abusive or hateful</option>
+        <option value="personal_info">Shares personal information</option>
+        <option value="self_harm">Someone may be at risk</option>
+        <option value="other">Something else</option>
+      </select>
+      <footer class="modal-foot">
+        <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+        <span class="spacer"></span>
+        <button type="submit" class="btn btn-primary">Send report</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="toast-region" aria-live="polite" aria-atomic="true" data-toasts></div>
+</body>
+</html>

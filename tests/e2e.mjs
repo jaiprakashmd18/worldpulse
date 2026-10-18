@@ -60,13 +60,14 @@ async function newPage(viewport, { live = null, motion = false } = {}) {
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   if (VENDOR) await page.route('https://cdn.jsdelivr.net/**', vendor);
   await page.route('https://fonts.googleapis.com/**', (r) => r.fulfill({ body: '', contentType: 'text/css' }));
-  if (live) {
-    await page.route(`${BASE}/js/config.js`, (r) => r.fulfill({
-      contentType: 'text/javascript',
-      body: `window.WORLDPULSE_CONFIG = { supabaseUrl: 'https://test-project.supabase.co', supabaseAnonKey: 'anon-test-key', pollIntervalMs: 60000 };`,
-    }));
-    await page.route('https://test-project.supabase.co/**', live);
-  }
+  // Never hit the real project from tests: demo tests get an empty config, live tests a mocked API.
+  await page.route(`${BASE}/js/config.js`, (r) => r.fulfill({
+    contentType: 'text/javascript',
+    body: live
+      ? `window.WORLDPULSE_CONFIG = { supabaseUrl: 'https://test-project.supabase.co', supabaseAnonKey: 'anon-test-key', pollIntervalMs: 60000 };`
+      : `window.WORLDPULSE_CONFIG = {};`,
+  }));
+  if (live) await page.route('https://test-project.supabase.co/**', live);
   return { page, errors, ctx };
 }
 

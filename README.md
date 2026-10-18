@@ -130,7 +130,7 @@ cp .env.example .env
 npm run dev
 ```
 
-The dev server builds `js/config.js` from `.env` on the fly. The hero status should change to **Live** within a few seconds.
+The dev server builds `js/config.js` from `.env` on the fly. Alternatively, put the URL and anon key directly in `js/config.js` and commit it (the anon key is public by design); environment variables, when set, override the file at build time. The hero status should change to **Live** within a few seconds.
 
 ### Environment variables
 

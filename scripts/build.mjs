@@ -12,7 +12,10 @@ mkdirSync(dist);
 for (const entry of ['index.html', 'css', 'js', 'assets']) {
   cpSync(new URL(entry, root), new URL(entry, dist), { recursive: true });
 }
-const source = configSource();
-writeFileSync(new URL('js/config.js', dist), source);
-const live = /"supabaseAnonKey": "[^"]+"/.test(source);
-console.log(`Built dist/ in ${live ? 'LIVE (Supabase)' : 'DEMO'} mode.`);
+// Environment variables win; otherwise keep the committed js/config.js.
+if (process.env.WORLDPULSE_SUPABASE_URL || process.env.SUPABASE_URL) {
+  writeFileSync(new URL('js/config.js', dist), configSource());
+  console.log('Built dist/ with config from environment variables.');
+} else {
+  console.log('Built dist/ with the committed js/config.js.');
+}

@@ -90,6 +90,14 @@ function setupConfigLinks() {
   const gh = $('[data-github-link]');
   if (config.githubUrl) { gh.href = config.githubUrl; gh.querySelector('.tag')?.remove(); gh.rel = 'noopener'; }
   else gh.addEventListener('click', (e) => { e.preventDefault(); toast('GitHub link not configured yet — set WORLDPULSE_GITHUB_URL.'); });
+  const site = (config.siteUrl || '').replace(/\/$/, '');
+  if (site) {
+    $$('[data-site-url]').forEach((a) => {
+      a.href = site;
+      a.lastChild.textContent = a.lastChild.textContent.replace(/[\w.-]+\.[a-z]{2,}$/i, site.replace(/^https?:\/\//, ''));
+    });
+  }
+  $('[data-copy-link]').addEventListener('click', () => copySiteLink(site || location.origin));
   const cfg = $('[data-config-link]');
   if (config.githubUrl) cfg.href = `${config.githubUrl}#connect-supabase`;
 }
@@ -1105,6 +1113,21 @@ function toast(text, kind = '') {
   const el = Object.assign(document.createElement('div'), { className: `toast ${kind}`, textContent: text });
   $('[data-toasts]').append(el);
   setTimeout(() => el.remove(), 5200);
+}
+
+async function copySiteLink(url) {
+  const label = $('[data-copy-label]');
+  try {
+    if (navigator.share && matchMedia('(pointer: coarse)').matches) {
+      await navigator.share({ title: 'WorldPulse', text: 'How is the world feeling today?', url });
+      return;
+    }
+    await navigator.clipboard.writeText(url);
+    label.textContent = 'Copied';
+    setTimeout(() => (label.textContent = 'Copy'), 2000);
+  } catch (err) {
+    if (err?.name !== 'AbortError') toast(`Copy this link: ${url}`);
+  }
 }
 
 function escapeText(s) {

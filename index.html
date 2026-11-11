@@ -10,6 +10,8 @@
   <meta property="og:title" content="WorldPulse — A Global Mood Map">
   <meta property="og:description" content="One planet. Billions of feelings. Add your feeling to the global pulse.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ghost-gobal.vercel.app">
+  <link rel="canonical" href="https://ghost-gobal.vercel.app">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +27,7 @@
 
   <div id="demo-banner" class="demo-banner" role="status" hidden>
     <span class="demo-pill">Demo mode</span>
-    <span>You're viewing <strong>sample data</strong>, not real people. Submissions stay in this browser only.</span>
+    <span>You're viewing <strong>sample data</strong>, not real people.<span class="hide-sm"> Submissions stay in this browser only.</span></span>
     <a href="https://github.com/your-org/worldpulse#connect-supabase" class="demo-link" data-config-link>Set up live mode</a>
   </div>
 
@@ -75,6 +77,15 @@
           <div><dt>Countries represented</dt><dd data-stat="countries"><span class="skeleton">—</span></dd></div>
           <div><dt>Most shared</dt><dd data-stat="top"><span class="skeleton">—</span></dd></div>
         </dl>
+        <div class="site-link">
+          <span class="site-link-dot" aria-hidden="true"></span>
+          <span class="site-link-label">Share WorldPulse</span>
+          <a href="https://ghost-gobal.vercel.app" data-site-url rel="noopener">ghost-gobal.vercel.app</a>
+          <button type="button" class="site-link-btn" data-copy-link aria-label="Copy link to WorldPulse">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+            <span data-copy-label>Copy</span>
+          </button>
+        </div>
       </div>
 
       <div class="globe-stage" id="globe-stage">
@@ -147,10 +158,10 @@
           <p class="muted" data-updated>—</p>
         </div>
         <div class="segmented" role="radiogroup" aria-label="Time window" data-window-tabs>
-          <button role="radio" data-window="1h" aria-checked="false">Last hour</button>
-          <button role="radio" data-window="24h" aria-checked="true">24 hours</button>
-          <button role="radio" data-window="7d" aria-checked="false">7 days</button>
-          <button role="radio" data-window="30d" aria-checked="false">30 days</button>
+          <button role="radio" data-window="1h" aria-checked="false" aria-label="Last hour"><span class="long" aria-hidden="true">Last hour</span><span class="short" aria-hidden="true">1h</span></button>
+          <button role="radio" data-window="24h" aria-checked="true" aria-label="Last 24 hours"><span class="long" aria-hidden="true">24 hours</span><span class="short" aria-hidden="true">24h</span></button>
+          <button role="radio" data-window="7d" aria-checked="false" aria-label="Last 7 days"><span class="long" aria-hidden="true">7 days</span><span class="short" aria-hidden="true">7d</span></button>
+          <button role="radio" data-window="30d" aria-checked="false" aria-label="Last 30 days"><span class="long" aria-hidden="true">30 days</span><span class="short" aria-hidden="true">30d</span></button>
         </div>
       </div>
 
@@ -280,6 +291,7 @@
       <div class="footer-brand">
         <a class="brand" href="#explore"><span>World<b>Pulse</b></span></a>
         <p class="muted small">One planet. Billions of feelings.</p>
+        <a class="footer-url" href="https://ghost-gobal.vercel.app" data-site-url>🌐 ghost-gobal.vercel.app</a>
       </div>
       <nav aria-label="Footer">
         <ul class="footer-links">

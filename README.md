@@ -141,6 +141,7 @@ The dev server builds `js/config.js` from `.env` on the fly. Alternatively, put 
 | `WORLDPULSE_POLL_INTERVAL_MS` | no | Polling interval when Realtime is unavailable (default 60000, minimum 15000) |
 | `WORLDPULSE_CONTACT_EMAIL` | no | Shown in the Contact dialog |
 | `WORLDPULSE_GITHUB_URL` | no | Footer GitHub link and the demo banner's setup link |
+| `WORLDPULSE_SITE_URL` | no | Public address shown in the hero and footer (default `https://ghost-gobal.vercel.app`) |
 
 `SUPABASE_URL` and `SUPABASE_ANON_KEY` also work as fallbacks.
 

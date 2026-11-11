@@ -138,7 +138,7 @@ export async function renderTimeline(canvas, timeline, win) {
       maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       scales: {
-        x: { grid: { display: false }, ticks: { maxTicksLimit: 6, maxRotation: 0 } },
+        x: { grid: { display: false }, ticks: { maxTicksLimit: canvas.clientWidth < 420 ? 3 : canvas.clientWidth < 640 ? 4 : 6, maxRotation: 0 } },
         y: { beginAtZero: true, ticks: { precision: 0, maxTicksLimit: 5 }, title: { display: true, text: 'Moods' } },
         y1: { position: 'right', min: 0, max: 100, grid: { display: false }, ticks: { callback: (v) => `${v}%`, maxTicksLimit: 5 } },
       },

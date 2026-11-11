@@ -7,4 +7,5 @@ window.WORLDPULSE_CONFIG = {
   pollIntervalMs: 60000,
   contactEmail: '',
   githubUrl: '',
+  siteUrl: 'https://ghost-gobal.vercel.app',
 };
